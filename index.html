@@ -6,274 +6,68 @@
 <title>College Timetable</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-}
-
 body{
-    background:linear-gradient(135deg,#1f1f2e,#2c3e50);
-    padding:30px 15px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background:#1f1f2e;
     color:white;
+    padding:20px;
 }
 
-.container{
-    max-width:1000px;
-    margin:auto;
-}
-
-/* HEADER */
-header{
-    text-align:center;
-    margin-bottom:25px;
-}
-
-header h1{
-    font-size:2.2rem;
-    font-weight:600;
-}
-
-header p{
-    opacity:0.7;
-    margin-top:6px;
-}
-
-/* MESS LINK */
-.mess{
-    text-align:center;
-    margin-bottom:25px;
-}
-
-.mess a{
-    background:#0a84ff;
-    padding:10px 20px;
-    border-radius:20px;
-    text-decoration:none;
-    color:white;
-    transition:0.3s;
-}
-
-.mess a:hover{
-    background:#0066cc;
-}
-
-/* Hide radio buttons */
-input[type="radio"]{
-    display:none;
-}
-
-/* Day buttons */
-.tabs{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:30px;
-}
-
-.tabs label{
-    padding:10px 18px;
-    background:rgba(255,255,255,0.1);
-    border-radius:20px;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.tabs label:hover{
-    background:rgba(255,255,255,0.2);
-}
-
-/* Active tab */
-#monday:checked ~ .tabs label[for="monday"],
-#tuesday:checked ~ .tabs label[for="tuesday"],
-#wednesday:checked ~ .tabs label[for="wednesday"],
-#thursday:checked ~ .tabs label[for="thursday"],
-#friday:checked ~ .tabs label[for="friday"],
-#saturday:checked ~ .tabs label[for="saturday"]{
-    background:#0a84ff;
-}
-
-/* Day content logic */
-.day-content{
-    display:none;
-}
-
-#monday:checked ~ .content #mon,
-#tuesday:checked ~ .content #tue,
-#wednesday:checked ~ .content #wed,
-#thursday:checked ~ .content #thu,
-#friday:checked ~ .content #fri,
-#saturday:checked ~ .content #sat{
-    display:block;
-}
-
-/* Cards */
 .card{
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    border-radius:15px;
+    background:#2c3e50;
     padding:15px;
-    margin-bottom:12px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.3);
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-4px);
-}
-
-.time{
-    font-size:0.85rem;
-    opacity:0.8;
-}
-
-.subject{
-    font-size:1.05rem;
-    font-weight:600;
-    margin:5px 0;
-}
-
-.faculty{
-    font-size:0.85rem;
-    opacity:0.85;
-}
-
-.venue{
-    font-size:0.8rem;
-    opacity:0.6;
-}
-
-.lunch{
-    background:rgba(255,165,0,0.15);
-    border:1px solid rgba(255,165,0,0.4);
-    text-align:center;
-    font-weight:600;
-}
-
-.badge{
-    background:#ff375f;
-    padding:3px 8px;
+    margin-bottom:10px;
     border-radius:10px;
-    font-size:0.7rem;
-    display:inline-block;
-    margin-top:5px;
-}
-
-/* Footer */
-footer{
-    text-align:center;
-    margin-top:30px;
-    opacity:0.6;
-    font-size:0.85rem;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<header>
 <h1>Class Timetable</h1>
-<p>First Year B.Tech Computer Engineering – Semester II</p>
-</header>
+<div id="timetable"></div>
 
-<div class="mess">
-<a href="https://nmims-mess-menu.vercel.app" target="_blank">
-View Today’s Mess Menu
-</a>
-</div>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-<!-- Radio Buttons -->
-<input type="radio" id="monday" name="tab" checked>
-<input type="radio" id="tuesday" name="tab">
-<input type="radio" id="wednesday" name="tab">
-<input type="radio" id="thursday" name="tab">
-<input type="radio" id="friday" name="tab">
-<input type="radio" id="saturday" name="tab">
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCo-qqxxAAaDss7fmj5eYQGS1lN3DepQBE",
+  authDomain: "nmims-timetable.firebaseapp.com",
+  databaseURL: "https://nmims-timetable-default-rtdb.firebaseio.com",
+  projectId: "nmims-timetable",
+  storageBucket: "nmims-timetable.firebasestorage.app",
+  messagingSenderId: "560553279585",
+  appId: "1:560553279585:web:fb97228e1f54a93aa16a20"
+};
 
-<!-- Tabs -->
-<div class="tabs">
-<label for="monday">Monday</label>
-<label for="tuesday">Tuesday</label>
-<label for="wednesday">Wednesday</label>
-<label for="thursday">Thursday</label>
-<label for="friday">Friday</label>
-<label for="saturday">Saturday</label>
-</div>
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-<!-- Content -->
-<div class="content">
+const container = document.getElementById("timetable");
 
-<!-- MONDAY -->
-<div id="mon" class="day-content">
-<div class="card"><div class="time">11:00 – 12:00</div><div class="subject">OOP / EC</div><div class="faculty">Rashmi Sharma / Sanjay Shrivastava</div></div>
-<div class="card lunch">01:00 – 02:00 🍴 Lunch Break</div>
-<div class="card"><div class="time">02:00 – 03:00</div><div class="subject">Product Realization</div><div class="faculty">Rakesh Chaudhari</div></div>
-<div class="card"><div class="time">03:00 – 04:00</div><div class="subject">Quantum Physics</div><div class="faculty">Vishab Kesarwani</div></div>
-<div class="card"><div class="time">04:00 – 05:00</div><div class="subject">LADE</div><div class="faculty">Prashant Kumar</div></div>
-</div>
+db.ref("timetable").on("value", function(snapshot) {
+    const data = snapshot.val();
+    container.innerHTML = "";
 
-<!-- TUESDAY -->
-<div id="tue" class="day-content">
-<div class="card"><div class="time">09:00 – 10:00</div><div class="subject">Quantum Physics</div></div>
-<div class="card"><div class="time">12:00 – 01:00</div><div class="subject">PR / WD</div></div>
-<div class="card lunch">01:00 – 02:00 🍴 Lunch Break</div>
-<div class="card"><div class="time">02:00 – 04:00</div><div class="subject">ADE Lab (Batch D1 & D2)</div><div class="venue">DDL Lab</div></div>
-<div class="card"><div class="time">04:00 – 05:00</div><div class="subject">OOP</div></div>
-</div>
+    for (let day in data) {
+        const dayTitle = document.createElement("h2");
+        dayTitle.innerText = day.toUpperCase();
+        container.appendChild(dayTitle);
 
-<!-- WEDNESDAY -->
-<div id="wed" class="day-content">
-<div class="card"><div class="time">09:00 – 10:00</div><div class="subject">LADE / QP</div></div>
-<div class="card"><div class="time">11:00 – 12:00</div><div class="subject">BEEE / WD Tutorial</div></div>
-<div class="card lunch">01:00 – 02:00 🍴 Lunch Break</div>
-<div class="card"><div class="time">02:00 – 03:00</div><div class="subject">OOP</div></div>
-<div class="card"><div class="time">03:00 – 04:00</div><div class="subject">COI</div></div>
-<div class="card"><div class="time">04:00 – 05:00</div><div class="subject">Library / Self Study</div></div>
-</div>
-
-<!-- THURSDAY -->
-<div id="thu" class="day-content">
-<div class="card"><div class="time">10:00 – 11:00</div><div class="subject">LADE</div></div>
-<div class="card"><div class="time">11:00 – 12:00</div><div class="subject">EC / OOP</div></div>
-<div class="card lunch">01:00 – 02:00 🍴 Lunch Break</div>
-<div class="card"><div class="time">02:00 – 03:00</div><div class="subject">BEEE</div></div>
-<div class="card"><div class="time">03:00 – 04:00</div><div class="subject">Web Development</div></div>
-<div class="card"><div class="time">04:00 – 05:00</div><div class="subject">Mentoring / Academic Support</div></div>
-</div>
-
-<!-- FRIDAY -->
-<div id="fri" class="day-content">
-<div class="card"><div class="time">09:00 – 10:00</div><div class="subject">LADE</div></div>
-<div class="card lunch">01:00 – 02:00 🍴 Lunch Break</div>
-<div class="card"><div class="time">02:00 – 03:00</div><div class="subject">WD Tutorial / PR</div></div>
-<div class="card">
-<div class="time">03:00 – 04:00</div>
-<div class="subject">QP / BEEE</div>
-</div>
-<div class="card">
-<div class="time">04:00 – 05:00</div>
-<div class="subject">Revision / Practice</div>
-</div>
-</div>
-
-<!-- SATURDAY -->
-<div id="sat" class="day-content">
-<div class="card">No Regular Classes (Projects / Clubs / Sports)</div>
-</div>
-
-</div>
-
-<footer>
-Designed & Developed by <strong>Aryan Mahajan</strong><br>
-Program: B353 | SAP ID: 70022400118<br>
-Academic Year 2025–26
-</footer>
-
-</div>
+        for (let item in data[day]) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <strong>${data[day][item].time}</strong><br>
+                ${data[day][item].subject || ""}
+            `;
+            container.appendChild(card);
+        }
+    }
+});
+</script>
 
 </body>
 </html>
