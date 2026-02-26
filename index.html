@@ -51,18 +51,26 @@ db.ref("timetable").on("value", function(snapshot) {
     const data = snapshot.val();
     container.innerHTML = "";
 
+    if (!data) return;
+
     for (let day in data) {
+
         const dayTitle = document.createElement("h2");
         dayTitle.innerText = day.toUpperCase();
         container.appendChild(dayTitle);
 
         for (let item in data[day]) {
+
             const card = document.createElement("div");
             card.className = "card";
+
+            const lesson = data[day][item];
+
             card.innerHTML = `
-                <strong>${data[day][item].time}</strong><br>
-                ${data[day][item].subject || ""}
+                <strong>${lesson.time || ""}</strong><br>
+                ${lesson.subject || ""}
             `;
+
             container.appendChild(card);
         }
     }
